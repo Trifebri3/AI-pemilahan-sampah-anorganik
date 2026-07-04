@@ -12,6 +12,8 @@ import tensorflow as tf
 import cv2
 from flask import Flask, request, jsonify
 from src.config import MODEL_SAVE_DIR, CLASSES, IMAGE_SIZE
+# Force absolute paths for hosting environment compatibility
+MODEL_SAVE_DIR = os.path.join(BASE_DIR, MODEL_SAVE_DIR)
 from src.cbam import ChannelAttention, SpatialAttention
 
 app = Flask(__name__)

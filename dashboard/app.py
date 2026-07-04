@@ -15,6 +15,9 @@ import cv2
 import matplotlib.pyplot as plt
 from PIL import Image
 from src.config import MODEL_SAVE_DIR, VISUALIZATION_DIR, CLASSES, IMAGE_SIZE
+# Force absolute paths for hosting environment compatibility
+MODEL_SAVE_DIR = os.path.join(BASE_DIR, MODEL_SAVE_DIR)
+VISUALIZATION_DIR = os.path.join(BASE_DIR, VISUALIZATION_DIR)
 from src.cbam import ChannelAttention, SpatialAttention
 from src.gradcam import generate_gradcam
 
