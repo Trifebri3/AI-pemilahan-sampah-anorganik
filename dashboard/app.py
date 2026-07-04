@@ -92,12 +92,19 @@ def load_model_cached(model_name):
     Memuat model secara cached agar tidak membebani memori setiap interaksi.
     """
     path = os.path.join(MODEL_SAVE_DIR, f"{model_name}_best.keras")
+    print(f"[AI Smart Bin Debug] Target model path: {path}")
+    print(f"[AI Smart Bin Debug] File exists: {os.path.exists(path)}")
+    print(f"[AI Smart Bin Debug] Current working directory: {os.getcwd()}")
     if os.path.exists(path):
         custom_objects = {
             'ChannelAttention': ChannelAttention,
             'SpatialAttention': SpatialAttention
         }
-        return tf.keras.models.load_model(path, custom_objects=custom_objects)
+        try:
+            return tf.keras.models.load_model(path, custom_objects=custom_objects)
+        except Exception as e:
+            print(f"[AI Smart Bin Debug] Error loading model: {str(e)}")
+            st.error(f"Error loading model: {str(e)}")
     return None
 
 def get_history_df():
