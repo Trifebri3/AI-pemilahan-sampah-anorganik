@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+build/
+dist/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IDEs
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Datasets (Large Files - Do not commit to git)
+dataset/
+dataset_split/
+
+# Model Files (Trained weights - Commit only final small models if needed)
+models/*.keras
+models/*.h5
+!models/efficientnet_b0_cbam_best_quant16.tflite
+
+# Visualizations & Logs
+history/
+*.log
+.system_generated/
+scratch/
+.gemini/
+.agents/
+.tempmediaStorage/
+walkthrough.md
+implementation_plan.md
+task.md

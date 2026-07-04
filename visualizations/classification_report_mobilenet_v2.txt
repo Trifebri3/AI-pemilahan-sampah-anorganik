@@ -1,0 +1,11 @@
+              precision    recall  f1-score   support
+
+        Kaca       0.89      0.83      0.86       212
+      Kertas       0.98      0.95      0.96       158
+       Logam       0.84      0.95      0.89       116
+     Plastik       0.77      0.79      0.78       131
+      Residu       0.92      0.93      0.93       106
+
+    accuracy                           0.88       723
+   macro avg       0.88      0.89      0.88       723
+weighted avg       0.88      0.88      0.88       723
