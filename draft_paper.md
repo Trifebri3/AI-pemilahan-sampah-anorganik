@@ -37,6 +37,22 @@ In this section, you should explain how the research was conducted, including re
 
 The hardware client is built around an ESP32-CAM module connected to an HC-SR04 ultrasonic distance sensor and an SG90 servo motor [14]. When an object is placed within the detection range (less than 10 cm), the ultrasonic sensor triggers the OV2640 camera to capture a JPEG frame. The frame is transmitted over HTTP POST to a centralized Flask API backend. The server runs the deep learning model inference, saves the classification results to a persistent CSV log file, and returns a JSON payload containing the predicted category and target servo angle. The ESP32-CAM parses this response to rotate the servo to the corresponding compartment, segregating the waste before returning to a neutral 90-degree standby position. The overall architecture is depicted in the workflow shown in Fig. 1.
 
+========================================================================
+[FIGURE PLACEHOLDER 1 - ENTER WORKFLOW CHART HERE]
+Mermaid Diagram Code:
+graph TD
+    A[Sampah Masuk] --> B[Sensor Ultrasonik mendeteksi < 10cm]
+    B --> C[ESP32-CAM Ambil Gambar]
+    C --> D[Kirim Gambar via HTTP POST]
+    D --> E[Flask API Server]
+    E --> F[Inference: Best Model EfficientNetB0+CBAM]
+    F --> G[Hasil Klasifikasi & Sudut Servo JSON]
+    G --> H[ESP32-CAM terima respon]
+    H --> I[Gerakkan Servo sesuai sudut]
+    I --> J[Sampah masuk kompartemen]
+    F --> K[Catat Sejarah Klasifikasi di CSV]
+    K --> L[Dashboard Streamlit menampilkan Real-time Stats]
+========================================================================
 Fig. 1. Workflow Diagram of the IoT Smart Bin System
 
 The dataset comprises 4,785 images divided into five classes: Glass (1,404), Paper (1,050), Metal (769), Plastic (865), and Residu (697) [15]. The dataset was split into 70% for training (3,349 images), 15% for validation (718 images), and 15% for testing (718 images). Images were resized to 224x224 pixels. Data augmentation layers (horizontal flips, 15% random rotation, 15% random zoom, and brightness adjustments) were incorporated in the training pipeline to prevent model overfitting.
@@ -62,9 +78,43 @@ EfficientNetB0 + CBAM (Proposed)	90.73%	91.31%	90.21%	90.71%	13.28 ms
 
 The baseline MobileNetV2 achieved an accuracy of 88.11% with the lowest latency of 10.99 ms. The standard EfficientNetB0 achieved the highest overall accuracy of 91.56%. The proposed EfficientNetB0 + CBAM achieved a competitive accuracy of 90.73% with a minor latency overhead of 13.28 ms. The integration of CBAM stabilizes model convergence and reduces false positives on highly reflective objects like glass and plastics, which often confuse standard CNNs due to overlapping transparency features.
 
-Explainable AI (XAI) analysis using Grad-CAM was implemented to visualize the model's focus, as illustrated in Fig. 2.
+The ROC curves comparing the true positive and false positive rates of the three networks are shown in Fig. 2, while the Precision-Recall curves are shown in Fig. 3.
 
-Fig. 2. Grad-CAM Activation Visualizations for Waste Class Plastics
+========================================================================
+[FIGURE PLACEHOLDER 2 - INSERT ROC CURVES CHART HERE]
+File Path: visualizations/roc_curves_comparison.png
+========================================================================
+Fig. 2. ROC Curves Comparison for the Three Evaluated Models
+
+========================================================================
+[FIGURE PLACEHOLDER 3 - INSERT PRECISION-RECALL CURVES CHART HERE]
+File Path: visualizations/precision_recall_curves.png
+========================================================================
+Fig. 3. Precision-Recall Curves for EfficientNetB0 + CBAM
+
+The training curves for accuracy and loss over epochs are displayed in Fig. 4.
+
+========================================================================
+[FIGURE PLACEHOLDER 4 - INSERT TRAINING HISTORY CURVES HERE]
+File Path: visualizations/training_history_curves.png
+========================================================================
+Fig. 4. Training Accuracy and Loss Curves
+
+The confusion matrix for the final CBAM model on the test set is presented in Fig. 5.
+
+========================================================================
+[FIGURE PLACEHOLDER 5 - INSERT CONFUSION MATRIX HEATMAP HERE]
+File Path: visualizations/confusion_matrix_efficientnet_b0_cbam.png
+========================================================================
+Fig. 5. Confusion Matrix Heatmap for EfficientNetB0 + CBAM Model
+
+Explainable AI (XAI) analysis using Grad-CAM was implemented to visualize the model's focus, as illustrated in Fig. 6.
+
+========================================================================
+[FIGURE PLACEHOLDER 6 - INSERT GRAD-CAM ATTENTION MAP HERE]
+File Path: visualizations/gradcam_comparison_plastik.png
+========================================================================
+Fig. 6. Grad-CAM Activation Visualizations for Waste Class Plastics
 
 The Grad-CAM heatmaps demonstrate that while standard EfficientNetB0 focuses broadly on the object, the proposed CBAM model concentrates highly on the precise contours of the waste items, ignoring the background. This confirms the efficacy of the spatial attention module in filtering background noise. After converting the model to a 16-bit quantized TensorFlow Lite (TFLite) format, the file size was reduced to 8.19 MB, ensuring a low memory footprint suitable for edge deployment. The Flask API server logs classifications to a CSV file in real-time, allowing the Streamlit web dashboard to auto-refresh every 3 seconds to show updated recycling statistics.
 
