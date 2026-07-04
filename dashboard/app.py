@@ -277,6 +277,14 @@ if page == "Dashboard Real-Time":
             )
         else:
             st.info("Belum ada riwayat deteksi. Jalankan klasifikasi secara manual atau hubungkan dengan ESP32-CAM.")
+            
+    # Auto-refresh logic untuk pemantauan real-time (Hanya halaman Dashboard)
+    if page == "Dashboard Real-Time":
+        auto_refresh = st.sidebar.checkbox("Auto-Refresh Real-Time (3s)", value=True, key="auto_refresh_p1")
+        if auto_refresh:
+            import time
+            time.sleep(3)
+            st.rerun()
 
 # ----------------- PAGE: SIMULASI FISIK SMART BIN -----------------
 elif page == "Simulasi Fisik Smart Bin":
