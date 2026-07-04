@@ -85,6 +85,7 @@ st.markdown("""
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HISTORY_FILE = os.path.join(BASE_DIR, "history", "classification_history.csv")
 UPLOADS_DIR = os.path.join(BASE_DIR, "history", "uploads")
+os.makedirs(UPLOADS_DIR, exist_ok=True)
 
 @st.cache_resource
 def load_model_cached(model_name):
