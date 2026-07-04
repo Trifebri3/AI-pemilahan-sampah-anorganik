@@ -29,6 +29,9 @@ dataset_split/
 models/*.keras
 models/*.h5
 !models/efficientnet_b0_cbam_best_quant16.tflite
+!models/efficientnet_b0_cbam_best.keras
+!models/efficientnet_b0_best.keras
+!models/mobilenet_v2_best.keras
 
 # Visualizations & Logs
 history/

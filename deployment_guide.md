@@ -27,11 +27,11 @@ git commit -m "Initial commit: AI Smart Bin dengan model EfficientNetB0+CBAM dan
 
 ### 4. Menghubungkan ke GitHub
 1. Buka [GitHub](https://github.com/) dan buat repository baru bernama `ai-smart-bin`.
-2. Salin URL repository Anda (contoh: `https://github.com/username/ai-smart-bin.git`).
+2. Salin URL repository Anda (contoh: `https://github.com/Trifebri3/AI-pemilahan-sampah-anorganik.git`).
 3. Jalankan perintah berikut untuk menghubungkan dan mengunggah kode:
 ```bash
 git branch -M main
-git remote add origin https://github.com/username/ai-smart-bin.git
+git remote add origin https://github.com/Trifebri3/AI-pemilahan-sampah-anorganik.git
 git push -u origin main
 ```
 
