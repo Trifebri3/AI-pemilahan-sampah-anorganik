@@ -4,34 +4,58 @@
 #include <ESP32Servo.h> // Pastikan library ESP32Servo terinstal di Arduino IDE
 
 // ==========================================
+// PILIH KONFIGURASI BOARD YANG DIGUNAKAN:
+// ==========================================
+// #define BOARD_ESP32_CAM_AI_THINKER  // uncomment jika menggunakan ESP32-CAM AI-Thinker lama
+#define BOARD_ESP32_S3_WROOM_CAM       // Aktif untuk ESP32-S3 WROOM CAM / ESP32-S3 Dev Module
+
+// ==========================================
 // KREDENSIAL WIFI & CONFIG SERVER
 // ==========================================
 const char* ssid = "NAMA_WIFI_ANDA";
 const char* password = "PASSWORD_WIFI_ANDA";
 
-
-// Contoh: "http://192.168.1.100:5000/predict"
-const char* serverUrl = "http://IP_SERVER_ANDA:5000/predict";
+// Contoh: "http://sampah.ihi.my.id:5000/predict"
+const char* serverUrl = "http://sampah.ihi.my.id:5000/predict";
 
 // ==========================================
-// PIN DEFINITIONS UNTUK ESP32-CAM (AI-THINKER)
+// PIN DEFINITIONS UNTUK CAMERA
 // ==========================================
-#define PWDN_GPIO_NUM     32
-#define RESET_GPIO_NUM    -1
-#define XCLK_GPIO_NUM      0
-#define SIOD_GPIO_NUM     26
-#define SIOC_GPIO_NUM     27
-#define Y9_GPIO_NUM       35
-#define Y8_GPIO_NUM       34
-#define Y7_GPIO_NUM       39
-#define Y6_GPIO_NUM       36
-#define Y5_GPIO_NUM       21
-#define Y4_GPIO_NUM       19
-#define Y3_GPIO_NUM       18
-#define Y2_GPIO_NUM        5
-#define VSYNC_GPIO_NUM    25
-#define HREF_GPIO_NUM     23
-#define PCLK_GPIO_NUM     22
+#ifdef BOARD_ESP32_S3_WROOM_CAM
+  #define PWDN_GPIO_NUM     -1
+  #define RESET_GPIO_NUM    -1
+  #define XCLK_GPIO_NUM     15
+  #define SIOD_GPIO_NUM      4
+  #define SIOC_GPIO_NUM      5
+  #define Y9_GPIO_NUM       16
+  #define Y8_GPIO_NUM       17
+  #define Y7_GPIO_NUM       18
+  #define Y6_GPIO_NUM       12
+  #define Y5_GPIO_NUM       10
+  #define Y4_GPIO_NUM        8
+  #define Y3_GPIO_NUM        9
+  #define Y2_GPIO_NUM       11
+  #define VSYNC_GPIO_NUM     6
+  #define HREF_GPIO_NUM      7
+  #define PCLK_GPIO_NUM     13
+#elif defined(BOARD_ESP32_CAM_AI_THINKER)
+  #define PWDN_GPIO_NUM     32
+  #define RESET_GPIO_NUM    -1
+  #define XCLK_GPIO_NUM      0
+  #define SIOD_GPIO_NUM     26
+  #define SIOC_GPIO_NUM     27
+  #define Y9_GPIO_NUM       35
+  #define Y8_GPIO_NUM       34
+  #define Y7_GPIO_NUM       39
+  #define Y6_GPIO_NUM       36
+  #define Y5_GPIO_NUM       21
+  #define Y4_GPIO_NUM       19
+  #define Y3_GPIO_NUM       18
+  #define Y2_GPIO_NUM        5
+  #define VSYNC_GPIO_NUM    25
+  #define HREF_GPIO_NUM     23
+  #define PCLK_GPIO_NUM     22
+#endif
 
 // ==========================================
 // PIN DEFINITIONS UNTUK SENSOR & ACTUATOR
