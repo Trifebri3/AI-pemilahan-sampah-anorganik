@@ -314,7 +314,9 @@ elif page == "Simulasi Fisik Smart Bin":
         run_auto = False
         lock_close_only = True
         close_sensitivity = 1.5
-        if input_mode == "Webcam Lokal (Server/PC)":
+        if input_mode == "Kamera Browser (HP/Laptop)":
+            img_file = st.camera_input("Ambil Foto Sampah")
+        elif input_mode == "Webcam Lokal (Server/PC)":
             run_auto = st.checkbox("Aktifkan Pemindaian Otomatis (Scan Kontinu)", value=False)
             if run_auto:
                 st.markdown("---")
@@ -328,120 +330,14 @@ elif page == "Simulasi Fisik Smart Bin":
     with s_col2:
         st.markdown("### Visualisasi Respon Mekanis")
         
-        if input_mode == "Kamera Browser (HP/Laptop)":
-            # Browser camera client utilizing HTML5 & JS
-            html_code = """
-            <div style="text-align: center; font-family: system-ui, -apple-system, sans-serif; background: #ffffff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); max-width: 440px; margin: 0 auto; border: 2px solid #2E7D32;">
-                <video id="webcam" autoplay playsinline width="100%" style="border-radius: 8px; border: 2px solid #2E7D32; background: #000; height: 280px; object-fit: cover;"></video>
-                <br/>
-                <button id="capture-btn" style="background-color: #2E7D32; color: white; padding: 12px; border-radius: 6px; border: none; font-weight: bold; font-size: 0.95rem; margin-top: 12px; width: 100%; cursor: pointer;">AMBIL GAMBAR & DETEKSI</button>
-                
-                <div id="result-container" style="margin-top: 15px; display: none; padding: 12px; border-radius: 8px; background: #f9f9f9; border: 1px solid #ddd; text-align: left;">
-                    <h3 id="result-title" style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #333;">Memproses...</h3>
-                    <p id="result-desc" style="margin: 6px 0 0 0; color: #555; font-size: 0.9rem; line-height: 1.3;"></p>
-                    
-                    <div style="display: flex; justify-content: space-around; margin-top: 12px; border-top: 1px solid #eee; padding-top: 10px;">
-                        <div style="text-align: center;">
-                            <span style="font-size: 0.75rem; font-weight: bold; color: #888;">SERVO</span>
-                            <div style="font-size: 1.3rem; font-weight: bold; color: #d32f2f;" id="servo-angle-text">-</div>
-                        </div>
-                        <div style="text-align: center;">
-                            <span style="font-size: 0.75rem; font-weight: bold; color: #888;">WADAH</span>
-                            <div style="font-size: 1.3rem; font-weight: bold; color: #2E7D32;" id="category-text">-</div>
-                        </div>
-                    </div>
-                </div>
+        if input_mode == "Kamera Browser (HP/Laptop)" and img_file is None:
+            st.info("Gunakan kamera di bawah panel kontrol di sebelah kiri untuk memotret objek sampah.")
+            st.markdown("""
+            <div style="text-align: center; padding: 1.5rem; background: #ffffff; border: 2px dashed #ccc; border-radius: 15px; margin-top: 1rem;">
+                <h3 style="color: #888; margin-top: 0; font-weight: 700;">Menunggu Foto...</h3>
+                <p style="font-size: 1rem; color: #666;">Ambil foto sampah terlebih dahulu untuk mengaktifkan pemilah mekanis.</p>
             </div>
-
-            <script>
-                const video = document.getElementById('webcam');
-                const captureBtn = document.getElementById('capture-btn');
-                const resultContainer = document.getElementById('result-container');
-                const resultTitle = document.getElementById('result-title');
-                const resultDesc = document.getElementById('result-desc');
-                const servoAngleText = document.getElementById('servo-angle-text');
-                const categoryText = document.getElementById('category-text');
-
-                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-                        .then(function(stream) {
-                            video.srcObject = stream;
-                            video.play();
-                        })
-                        .catch(function(err) {
-                            alert("Kamera tidak dapat diakses di browser: " + err);
-                        });
-                }
-
-                captureBtn.addEventListener('click', () => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = video.videoWidth || 640;
-                    canvas.height = video.videoHeight || 480;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    
-                    canvas.toBlob((blob) => {
-                        const formData = new FormData();
-                        formData.append('image', blob, 'capture.jpg');
-                        
-                        resultContainer.style.display = "block";
-                        resultTitle.innerText = "Mengklasifikasikan...";
-                        resultTitle.style.color = "#757575";
-                        resultDesc.innerText = "";
-                        servoAngleText.innerText = "-";
-                        categoryText.innerText = "-";
-                        
-                        // Send request to Flask API
-                        const host = "http://" + window.location.hostname + ":5000";
-                        fetch(host + "/predict", {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                const category = data.category;
-                                const confidence = (data.confidence * 100).toFixed(2);
-                                const angle = data.servo_angle;
-                                
-                                servoAngleText.innerText = angle + "°";
-                                categoryText.innerText = category;
-                                
-                                if (category === "TIDAK DIKETAHUI") {
-                                    resultTitle.innerText = "SAMPAH TIDAK DIKENALI";
-                                    resultTitle.style.color = "#D32F2F";
-                                    resultDesc.innerText = `Objek tidak dikenali atau tidak memiliki kesamaan tinggi dengan data model (Confidence: ${confidence}%)`;
-                                    categoryText.style.color = "#D32F2F";
-                                } else {
-                                    resultTitle.innerText = `WADAH ${category.toUpperCase()} DIBUKA`;
-                                    const colors = {
-                                        "Kertas": "#FBC02D",
-                                        "Kaca": "#00ACC1",
-                                        "Logam": "#757575",
-                                        "Plastik": "#1E88E5",
-                                        "Residu": "#795548"
-                                    };
-                                    const color = colors[category] || "#2E7D32";
-                                    resultTitle.style.color = color;
-                                    categoryText.style.color = color;
-                                    resultDesc.innerHTML = `Terdeteksi <b>${category}</b> (${confidence}%). Servo diarahkan ke <b>${angle}°</b>.`;
-                                }
-                            } else {
-                                resultTitle.innerText = "Gagal Mendeteksi";
-                                resultTitle.style.color = "#D32F2F";
-                                resultDesc.innerText = data.error || "Terjadi kesalahan sistem.";
-                            }
-                        })
-                        .catch(err => {
-                            resultTitle.innerText = "Error API";
-                            resultTitle.style.color = "#D32F2F";
-                            resultDesc.innerText = "Gagal terhubung ke Flask API server (port 5000). Pastikan Flask Server Anda sedang berjalan.";
-                        });
-                    }, 'image/jpeg');
-                });
-            </script>
-            """
-            st.components.v1.html(html_code, height=520)
+            """, unsafe_allow_html=True)
             
         elif input_mode == "Webcam Lokal (Server/PC)" and run_auto:
             model = load_model_cached(model_choice)
